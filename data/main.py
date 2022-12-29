@@ -1,5 +1,5 @@
 from data import constants as c
-import tools
+from data import tools
 from states import main_menu, level
 
 
