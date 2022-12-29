@@ -1,6 +1,6 @@
 import pygame as pg
-from .. import constants as const
-from .. import tools
+from data import constants as const
+from data import tools
 
 
 class Menu(tools.State):

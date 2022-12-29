@@ -1,5 +1,5 @@
 import pygame as pg
-from .. import setup
+from data import setup
 
 
 class Pacman:
