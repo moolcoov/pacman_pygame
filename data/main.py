@@ -1,4 +1,4 @@
-import constants as c
+from data import constants as c
 import tools
 from states import main_menu, level
 
