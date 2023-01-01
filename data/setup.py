@@ -1,12 +1,10 @@
 import os
-import pygame as pg
-import tools
-import constants as c
+import pygame
+from data import constants as const
+
+CAPTION = const.CAPTION
 
 os.environ['SDL_VIDEO_CENTERED'] = '1'
-pg.init()
-pg.event.set_allowed([pg.KEYDOWN, pg.KEYUP, pg.QUIT])
-SCREEN = pg.display.set_mode(c.SCREEN_SIZE)
-SCREEN_RECT = SCREEN.get_rect()
-
-GFX = tools.load_graphics(os.path.join("resources", "graphics"))
+pygame.init()
+pygame.display.set_caption(const.CAPTION)
+display = pygame.display.set_mode(const.SCREEN_SIZE)

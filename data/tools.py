@@ -1,102 +1,94 @@
 import os
-import pygame as pg
 
-keybinding = {
-    'left': pg.K_LEFT,
-    'right': pg.K_RIGHT,
-    'up': pg.K_UP,
-    'down': pg.K_DOWN
-}
+import pygame
 
 
-class Control(object):
-    def __init__(self):
-        self.screen = pg.display.get_surface()
-        self.running = True
-        self.clock = pg.time.Clock()
-        self.fps = 60
-        self.current_time = 0.0
-        self.keys = pg.key.get_pressed()
-        self.state_dict = {}
-        self.state_name = None
+class Control:
+    """
+    Main game class
+    """
+
+    def __init__(self, caption):
+        """
+        Inits base statement
+        :param caption: (str) caption for screen
+        """
+        self.display = pygame.display.get_surface()
+        self.caption = caption
+        self.keys = pygame.key.get_pressed()
+        self.states = None
         self.state = None
+        self.running = False
+        self.clock = pygame.time.Clock()
+        self.fps = 60
 
-    def setup_states(self, state_dict, start_state):
-        self.state_dict = state_dict
-        self.state_name = start_state
-        self.state = self.state_dict[self.state_name]
+    def setup_states(self, states, default_state):
+        """
+        Setup states for the game
+        :param states: (dictionary): Dictionary of states
+        :param default_state: (state): Base state
+        """
+        self.states = states
+        self.state = states[default_state]
+
+    def flip_state(self, state):
+        # TODO(Flips the current state)
+        self.state = self.states[state]
 
     def update(self):
-        self.current_time = pg.time.get_ticks()
+        """
+        Updates the current state
+        """
         if self.state.quit:
             self.running = False
         elif self.state.done:
             self.flip_state()
-        self.state.update(self.screen, self.keys, self.current_time)
-
-    def flip_state(self):
-        previous, self.state_name = self.state_name, self.state.next
-        persist = self.state.cleanup()
-        self.state = self.state_dict[self.state_name]
-        self.state.startup(self.current_time, persist)
-        self.state.previous = previous
+        self.state.update(self.display)
 
     def event_loop(self):
-        for event in pg.event.get():
-            if event.type == pg.QUIT:
+        """
+        Event processing loop
+        """
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
                 self.running = False
-            elif event.type == pg.KEYDOWN:
-                self.keys = pg.key.get_pressed()
-            elif event.type == pg.KEYUP:
-                self.keys = pg.key.get_pressed()
             self.state.get_event(event)
 
     def main(self):
+        """
+        Main loop of the game
+        """
+        self.running = True
         while self.running:
             self.event_loop()
             self.update()
-            pg.display.update()
+            pygame.display.update()
             self.clock.tick(self.fps)
 
 
 class State(object):
-    def __init__(self):
-        self.start_time = 0.0
-        self.current_time = 0.0
-        self.done = False
-        self.quit = False
-        self.next = None
-        self.previous = None
-        self.persist = {}
+    """
+    A parent class for all of states
+    """
 
-    def startup(self, current_time, persistent):
-        self.persist = persistent
-        self.start_time = current_time
+    def __init__(self):
+        self.quit = False
+        self.done = False
+        self.props = {}
+
+    def get_event(self, event: pygame.event):
+        pass
 
     def cleanup(self):
-        self.done = False
-        return self.persist
+        """
+        Cleans state up, call if state is done
+        :return: (dictionary): props
+        """
+        self.done = True
+        return self.props
 
 
-def load_all_gfx(directory, colorkey=(255, 0, 255), accept=('.png', 'jpg', 'bmp')):
-    graphics = {}
-    for pic in os.listdir(directory):
-        name, ext = os.path.splitext(pic)
-        if ext.lower() in accept:
-            img = pg.image.load(os.path.join(directory, pic))
-            if img.get_alpha():
-                img = img.convert_alpha()
-            else:
-                img = img.convert()
-                img.set_colorkey(colorkey)
-            graphics[name] = img
-    return graphics
-
-
-def load_all_sfx(directory, accept=('.wav', '.mpe', '.ogg', '.mdi')):
-    effects = {}
-    for fx in os.listdir(directory):
-        name, ext = os.path.splitext(fx)
-        if ext.lower() in accept:
-            effects[name] = pg.mixer.Sound(os.path.join(directory, fx))
-    return effects
+def load_image(filename):
+    fullname = os.path.join('resources', "graphics", filename)
+    image = pygame.image.load(fullname)
+    return image

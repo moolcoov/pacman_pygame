@@ -1,10 +1,9 @@
-from data import sentry
 import sys
-import pygame as pg
-from data import main
+import pygame
+from data.main import main
 
 
-if __name__ == '__main__':
-    main.main()
-    pg.quit()
+if __name__ == "__main__":
+    main()
+    pygame.quit()
     sys.exit()

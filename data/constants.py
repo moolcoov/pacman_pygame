@@ -1,9 +1,9 @@
+# Pygame display
+CAPTION = "Pacman"
 SCREEN_SIZE = (500, 500)
+SCREEN_CENTER = SCREEN_SIZE[0] // 2
 
-# OVERHEAD INFO STATES
+# States
 MAIN_MENU = 'main menu'
-GAME_OVER = 'game over'
-END_OF_LEVEL = 'end of level'
-
-# LEVEL STATES
 LEVEL = 'level'
+GAME_OVER = 'game over'
