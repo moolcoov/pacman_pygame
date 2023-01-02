@@ -1,12 +1,13 @@
-from data import constants as c
-from data import tools
-from states import main_menu, level
+from data.tools import Control
+from data import constants as const
+from data import setup
+from data.states import main_menu, level, game_over
 
 
 def main():
-    run_it = tools.Control()
-    state_dict = {c.MAIN_MENU: main_menu.Menu(),
-                  c.LEVEL: level.Level()}
-
-    run_it.setup_states(state_dict, c.MAIN_MENU)
-    run_it.main()
+    control = Control(setup.CAPTION)
+    states = {
+        const.MAIN_MENU: main_menu.MainMenuState()
+    }
+    control.setup_states(states, const.MAIN_MENU)
+    control.main()
