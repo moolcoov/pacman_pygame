@@ -1,15 +1,13 @@
 import pygame
-from data import tools
+
 from data import constants as const
+from data import tools
 
 
 class MainMenuState(tools.State):
     def __init__(self):
         super().__init__()
-
         self.sprites = pygame.sprite.AbstractGroup()
-        self.color = "#2D2D2D"
-
         self.startup()
 
     def startup(self):
@@ -51,12 +49,14 @@ class MainMenuState(tools.State):
         self.button_quit.add(self.sprites)
 
     def get_event(self, event):
-
         if all([self.button_play.x <= pygame.mouse.get_pos()[0] <= self.button_play.x + self.button_play.w,
                 self.button_play.y <= pygame.mouse.get_pos()[1] <= self.button_play.y + self.button_play.h]):
             pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
             if event.type == pygame.MOUSEBUTTONUP:
-                print("play")
+                pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_NO)
+                pygame.mouse.set_visible(False)
+                self.next = const.LEVEL
+                self.done = True
         elif all([self.button_quit.x <= pygame.mouse.get_pos()[0] <= self.button_quit.x + self.button_quit.w,
                   self.button_quit.y <= pygame.mouse.get_pos()[1] <= self.button_quit.y + self.button_quit.h]):
             pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
@@ -65,6 +65,10 @@ class MainMenuState(tools.State):
         else:
             pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
 
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                self.quit = True
+
     def update(self, display):
-        display.fill(self.color)
+        display.fill(const.BG_COLOR)
         self.sprites.draw(display)
