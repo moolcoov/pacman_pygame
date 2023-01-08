@@ -1,4 +1,5 @@
 import pygame
+
 from data import tools
 from data.components import grid
 
@@ -19,23 +20,15 @@ class Pacman(pygame.sprite.Sprite):
         self.w, self.h = self.image.get_size()
         self.x, self.y = grid.cells[self.cell][0] - self.w // 2, grid.cells[self.cell][1] - self.h // 2
 
-        self.in_x_cell = True
-        self.in_y_cell = True
-
         self.pressed = None
-        self.speed = 4
-        self.step = 1
-
-        self.clock = pygame.time.Clock()
         self.speed = 2
+        self.step = 1
 
     def update_cell(self):
         for cell, coords in grid.cells.items():
             if all([(self.x + self.w // 2) == coords[0],
                     (self.y + self.h // 2) == coords[1]]):
                 self.cell = cell
-        print(self.cell)
-        print(self.x + self.w // 2, grid.cells[self.cell][0])
 
     def update_image(self, direction):
         if direction == "up":
@@ -98,4 +91,4 @@ class Pacman(pygame.sprite.Sprite):
 
     def update(self):
         self.move()
-        self.rect = ((self.x, self.y), (self.w, self.h))
+        self.rect = pygame.rect.Rect(self.x, self.y, self.w, self.h)

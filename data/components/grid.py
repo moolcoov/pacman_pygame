@@ -1,5 +1,3 @@
-from email.policy import default
-
 step = 18
 default_cell = (22, 12.5)
 
