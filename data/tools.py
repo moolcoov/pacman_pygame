@@ -20,7 +20,7 @@ class Control:
         self.state = None
         self.running = False
         self.clock = pygame.time.Clock()
-        self.fps = 60
+        self.fps = 20
 
     def setup_states(self, states, default_state):
         """
@@ -31,9 +31,9 @@ class Control:
         self.states = states
         self.state = states[default_state]
 
-    def flip_state(self, state):
-        # TODO(Flips the current state)
-        self.state = self.states[state]
+    def flip_state(self):
+        self.state.cleanup()
+        self.state = self.states[self.state.next]
 
     def update(self):
         """
@@ -74,6 +74,7 @@ class State(object):
     def __init__(self):
         self.quit = False
         self.done = False
+        self.next = None
         self.props = {}
 
     def get_event(self, event: pygame.event):
@@ -84,7 +85,7 @@ class State(object):
         Cleans state up, call if state is done
         :return: (dictionary): props
         """
-        self.done = True
+        self.done = False
         return self.props
 
 

@@ -1,15 +1,13 @@
 import pygame
-from data import tools
+
 from data import constants as const
+from data import tools
 
 
 class GameOverState(tools.State):
     def __init__(self):
         super().__init__()
-
         self.sprites = pygame.sprite.AbstractGroup()
-        self.color = "#2D2D2D"
-
         self.startup()
 
     def startup(self):
@@ -55,7 +53,8 @@ class GameOverState(tools.State):
                 self.button_res.y <= pygame.mouse.get_pos()[1] <= self.button_res.y + self.button_res.h]):
             pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
             if event.type == pygame.MOUSEBUTTONUP:
-                print("restart")
+                self.next = const.LEVEL
+                self.done = True
         elif all([self.button_quit.x <= pygame.mouse.get_pos()[0] <= self.button_quit.x + self.button_quit.w,
                   self.button_quit.y <= pygame.mouse.get_pos()[1] <= self.button_quit.y + self.button_quit.h]):
             pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
@@ -65,5 +64,5 @@ class GameOverState(tools.State):
             pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
 
     def update(self, display):
-        display.fill(self.color)
+        display.fill(const.BG_COLOR)
         self.sprites.draw(display)
