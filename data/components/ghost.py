@@ -1,4 +1,3 @@
-import pygame as pg
 from data import setup
 
 
@@ -6,7 +5,7 @@ class Ghost:
     def __init__(self):
         self.icon = None
         self.rect = None
-    
+
     def draw(self, display):
         display.blit(self.icon, )
 

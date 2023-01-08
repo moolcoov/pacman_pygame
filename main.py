@@ -1,5 +1,7 @@
 import sys
+
 import pygame
+
 from data import sentry
 from data.main import main
 

@@ -1,5 +1,7 @@
 import os
+
 import pygame
+
 from data import constants as const
 
 CAPTION = const.CAPTION
