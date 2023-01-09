@@ -1,4 +1,5 @@
 ![](./resources/media/banner.png)
+
 An attempt to create the pacman game with Pygame library.
 
 ## Control
