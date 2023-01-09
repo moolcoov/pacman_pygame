@@ -36,7 +36,7 @@ class LevelState(tools.State):
         self.background.rect = ((self.background.x, self.background.y), (self.background.w, self.background.h))
 
     def setup_score(self):
-        self.font = pygame.font.Font("./resources/fonts/retro-land-mayhem.ttf", 18)
+        self.font = pygame.font.Font("./resources/fonts/pixel.ttf", 18)
         self.level = self.font.render("LEVEL", True, const.WHITE_COLOR)
         self.level_score = self.font.render("0", True, const.WHITE_COLOR)
         self.total = self.font.render("TOTAL", True, const.WHITE_COLOR)
@@ -46,7 +46,6 @@ class LevelState(tools.State):
         self.pacman = pacman.Pacman(self.sprites)
 
     def setup_points(self):
-        print(grid.cells.items())
         for coords in grid.cells.values():
             if coords[2] == "s" or coords[2] == "b":
                 point.Point(coords[2], coords[0], coords[1], self.points)
