@@ -20,7 +20,7 @@ class Pacman(pygame.sprite.Sprite):
         self.w, self.h = self.image.get_size()
         self.x, self.y = grid.cells[self.cell][0] - self.w // 2, grid.cells[self.cell][1] - self.h // 2
 
-        self.pressed = None
+        self.pressed = []
         self.speed = 2
         self.step = 1
 
@@ -48,9 +48,9 @@ class Pacman(pygame.sprite.Sprite):
         :param event: {pygame.event} Event
         """
         if event.type == pygame.KEYDOWN:
-            self.pressed = event.key
+            self.pressed.append(event.key)
         if event.type == pygame.KEYUP:
-            self.pressed = None
+            self.pressed.remove(event.key)
 
     def move(self):
         """
@@ -65,29 +65,30 @@ class Pacman(pygame.sprite.Sprite):
         self.update_cell()
 
         # Keyboard events handler
-        if self.pressed == pygame.K_UP:
-            if all([(self.cell[0] - self.step, self.cell[1]) in grid.cells,
-                    int(self.x + self.w // 2) == grid.cells[self.cell][0]]):
-                self.update_image("up")
-                self.y -= self.step * self.speed
+        for event_key in self.pressed:
+            if event_key == pygame.K_UP:
+                if all([(self.cell[0] - self.step, self.cell[1]) in grid.cells,
+                        int(self.x + self.w // 2) == grid.cells[self.cell][0]]):
+                    self.update_image("up")
+                    self.y -= self.step * self.speed
 
-        if self.pressed == pygame.K_DOWN:
-            if all([(self.cell[0] + self.step, self.cell[1]) in grid.cells,
-                    int(self.x + self.w // 2) == grid.cells[self.cell][0]]):
-                self.update_image("down")
-                self.y += self.step * self.speed
+            if event_key == pygame.K_DOWN:
+                if all([(self.cell[0] + self.step, self.cell[1]) in grid.cells,
+                        int(self.x + self.w // 2) == grid.cells[self.cell][0]]):
+                    self.update_image("down")
+                    self.y += self.step * self.speed
 
-        if self.pressed == pygame.K_LEFT:
-            if all([(self.cell[0], self.cell[1] - self.step) in grid.cells,
-                    int(self.y + self.h // 2) == grid.cells[self.cell][1]]):
-                self.update_image("left")
-                self.x -= self.step * self.speed
+            if event_key == pygame.K_LEFT:
+                if all([(self.cell[0], self.cell[1] - self.step) in grid.cells,
+                        int(self.y + self.h // 2) == grid.cells[self.cell][1]]):
+                    self.update_image("left")
+                    self.x -= self.step * self.speed
 
-        if self.pressed == pygame.K_RIGHT:
-            if all([(self.cell[0], self.cell[1] + self.step) in grid.cells,
-                    int(self.y + self.h // 2) == grid.cells[self.cell][1]]):
-                self.update_image("right")
-                self.x += self.step * self.speed
+            if event_key == pygame.K_RIGHT:
+                if all([(self.cell[0], self.cell[1] + self.step) in grid.cells,
+                        int(self.y + self.h // 2) == grid.cells[self.cell][1]]):
+                    self.update_image("right")
+                    self.x += self.step * self.speed
 
     def update(self):
         self.move()

@@ -8,7 +8,6 @@ from data.components import pacman, grid, point
 class LevelState(tools.State):
     def __init__(self):
         super().__init__()
-
         self.points = pygame.sprite.AbstractGroup()
         self.sprites = pygame.sprite.AbstractGroup()
         self.startup()
