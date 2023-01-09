@@ -25,10 +25,22 @@ class Pacman(pygame.sprite.Sprite):
         self.step = 1
 
     def update_cell(self):
+        if self.cell == grid.default_cell:
+            self.step = 0.5
+        else:
+            self.step = 1
+
         for cell, coords in grid.cells.items():
             if all([(self.x + self.w // 2) == coords[0],
                     (self.y + self.h // 2) == coords[1]]):
                 self.cell = cell
+
+        if self.cell == (13, -2):
+            self.x, self.y = grid.cells[(13, 26)][0] - self.w // 2, grid.cells[(13, 26)][1] - self.h // 2
+        if self.cell == (13, 27):
+            self.x, self.y = grid.cells[(13, -1)][0] - self.w // 2, grid.cells[(13, -1)][1] - self.h // 2
+
+        print(self.cell)
 
     def update_image(self, direction):
         if direction == "up":
@@ -56,12 +68,6 @@ class Pacman(pygame.sprite.Sprite):
         """
         Moves the pacman
         """
-        # Moves from start position
-        if self.cell == grid.default_cell:
-            self.step = 0.5
-        else:
-            self.step = 1
-
         self.update_cell()
 
         # Keyboard events handler
