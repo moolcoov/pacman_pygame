@@ -19,7 +19,7 @@ class Control:
         self.state = None
         self.running = False
         self.clock = pygame.time.Clock()
-        self.fps = 20
+        self.fps = 60
 
     def setup_states(self, states, default_state):
         """
