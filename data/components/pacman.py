@@ -40,8 +40,6 @@ class Pacman(pygame.sprite.Sprite):
         if self.cell == (13, 27):
             self.x, self.y = grid.cells[(13, -1)][0] - self.w // 2, grid.cells[(13, -1)][1] - self.h // 2
 
-        print(self.cell)
-
     def update_image(self, direction):
         if direction == "up":
             self.image = self.up_image
