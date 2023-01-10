@@ -2,6 +2,8 @@
 
 An attempt to create the pacman game with Pygame library.
 
+Currently under development.
+
 ## Control
 
 Arrow keys for direction
