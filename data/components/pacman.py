@@ -71,6 +71,8 @@ class Pacman(pygame.sprite.Sprite):
         """
         self.update_cell()
 
+        self.w, self.h = self.image.get_size()
+
         # Keyboard events handler
         for event_key in self.pressed:
             if event_key == pygame.K_UP:
