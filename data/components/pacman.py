@@ -60,7 +60,10 @@ class Pacman(pygame.sprite.Sprite):
         if event.type == pygame.KEYDOWN:
             self.pressed.append(event.key)
         if event.type == pygame.KEYUP:
-            self.pressed.remove(event.key)
+            try:
+                self.pressed.remove(event.key)
+            except ValueError:
+                pass
 
     def move(self):
         """
