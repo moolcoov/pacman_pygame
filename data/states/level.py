@@ -53,6 +53,13 @@ class LevelState(tools.State):
     def get_event(self, event):
         self.pacman.get_event(event)
 
+    def cleanup(self):
+        self.done = False
+        self.props[const.LEVEL] = str(int(self.props[const.LEVEL]) + 1)
+        self.props[const.SCORE] = "0"
+        self.pacman.kill()
+        self.startup()
+
     def draw_score(self, display):
         display.blit(self.level, (142, 0))
         display.blit(self.level_score, (142, 21))
@@ -71,6 +78,9 @@ class LevelState(tools.State):
         self.total_score = self.font.render(self.props[const.TOTAL_SCORE], True, const.WHITE_COLOR)
 
     def update_points(self):
+        if not self.points.sprites():
+            self.next = const.LEVEL
+            self.done = True
         for point_t in self.points.sprites():
             point_t.update()
             if pygame.sprite.collide_rect(self.pacman, point_t):
