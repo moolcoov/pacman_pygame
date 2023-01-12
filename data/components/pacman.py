@@ -19,6 +19,7 @@ class Pacman(pygame.sprite.Sprite):
 
         self.w, self.h = self.image.get_size()
         self.x, self.y = grid.cells[self.cell][0] - self.w // 2, grid.cells[self.cell][1] - self.h // 2
+        self.rect = pygame.rect.Rect(0, 0, 0, 0)
 
         self.pressed = []
         self.speed = 2

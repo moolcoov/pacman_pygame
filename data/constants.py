@@ -16,3 +16,4 @@ GAME_OVER = 'game over'
 
 SCORE = "score"
 TOTAL_SCORE = "total score"
+LIVES = "lives"
