@@ -48,7 +48,7 @@ class LevelState(tools.State):
     def setup_points(self):
         for coords in grid.cells.values():
             if coords[2] == "s" or coords[2] == "b":
-                point.Point(coords[2], coords[0], coords[1], self.points)
+                point.Point(coords[2], coords[0], coords[1], self.sprites, self.points)
 
     def get_event(self, event):
         self.pacman.get_event(event)
@@ -70,7 +70,6 @@ class LevelState(tools.State):
         display.blit(self.background.image, self.background.rect)
         self.draw_score(display)
         self.sprites.draw(display)
-        self.points.draw(display)
 
     def update_score(self):
         self.level = self.font.render(f"LEVEL {self.props[const.LEVEL]}", True, const.WHITE_COLOR)
