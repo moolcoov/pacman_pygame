@@ -23,7 +23,6 @@ class LiveBar(pygame.sprite.Sprite):
             self.image = self.lives_2_image
         elif lives == 1:
             self.image = self.lives_1_image
-
         self.w, self.h = self.image.get_size()
 
     def update(self):
