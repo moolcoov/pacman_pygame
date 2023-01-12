@@ -2,7 +2,7 @@ import pygame
 
 from data import constants as const
 from data import tools
-from data.components import pacman, grid, point
+from data.components import pacman, grid, point, live_bar
 
 
 class LevelState(tools.State):
@@ -17,6 +17,7 @@ class LevelState(tools.State):
         self.setup_props()
         self.setup_bg()
         self.setup_score()
+        self.setup_live_bar()
         self.setup_pacman()
         self.setup_points()
 
@@ -25,7 +26,8 @@ class LevelState(tools.State):
             self.props = {
                 const.LEVEL: "1",
                 const.SCORE: "0",
-                const.TOTAL_SCORE: "0"
+                const.TOTAL_SCORE: "0",
+                const.LIVES: "3"
             }
 
     def setup_bg(self):
@@ -42,6 +44,9 @@ class LevelState(tools.State):
         self.total = self.font.render("TOTAL", True, const.WHITE_COLOR)
         self.total_score = self.font.render("0", True, const.WHITE_COLOR)
 
+    def setup_live_bar(self):
+        self.live_bar = live_bar.LiveBar(self.sprites)
+
     def setup_pacman(self):
         self.pacman = pacman.Pacman(self.sprites)
 
@@ -57,6 +62,7 @@ class LevelState(tools.State):
         self.done = False
         self.props[const.LEVEL] = str(int(self.props[const.LEVEL]) + 1)
         self.props[const.SCORE] = "0"
+        self.props[const.LIVES] = "3"
         self.pacman.kill()
         self.startup()
 
@@ -76,6 +82,18 @@ class LevelState(tools.State):
         self.level_score = self.font.render(self.props[const.SCORE], True, const.WHITE_COLOR)
         self.total_score = self.font.render(self.props[const.TOTAL_SCORE], True, const.WHITE_COLOR)
 
+    def update_lives(self, lives=None):
+        if lives:
+            self.props[const.LIVES] = str(int(self.props[const.LIVES]) - lives)
+            self.pacman.kill()
+            self.setup_pacman()
+        if self.props[const.LIVES] == "0":
+            pygame.mouse.set_visible(True)
+            self.next = const.GAME_OVER
+            self.done = True
+        self.live_bar.change_image(int(self.props[const.LIVES]))
+        self.live_bar.update()
+
     def update_points(self):
         if not self.points.sprites():
             self.next = const.LEVEL
@@ -89,10 +107,13 @@ class LevelState(tools.State):
                 elif point_t.point_type == "b":
                     self.props[const.SCORE] = str(int(self.props[const.SCORE]) + const.BIG_POINT)
                     self.props[const.TOTAL_SCORE] = str(int(self.props[const.TOTAL_SCORE]) + const.BIG_POINT)
+
+                    self.update_lives(1)
                 point_t.kill()
 
     def update_sprites(self):
         self.update_score()
+        self.update_lives()
         self.pacman.update()
         self.update_points()
 
