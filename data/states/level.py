@@ -2,7 +2,7 @@ import pygame
 
 from data import constants as const
 from data import tools
-from data.components import pacman, grid, point, live_bar
+from data.components import pacman, grid, point, live_bar, ghost
 
 
 class LevelState(tools.State):
@@ -10,6 +10,7 @@ class LevelState(tools.State):
         super().__init__()
         self.props = None
         self.points = pygame.sprite.AbstractGroup()
+        self.ghosts = pygame.sprite.AbstractGroup()
         self.sprites = pygame.sprite.AbstractGroup()
         self.startup()
 
@@ -20,6 +21,7 @@ class LevelState(tools.State):
         self.setup_live_bar()
         self.setup_pacman()
         self.setup_points()
+        self.setup_ghosts()
 
     def setup_props(self):
         if not self.props:
@@ -55,6 +57,9 @@ class LevelState(tools.State):
             if coords[2] == "s" or coords[2] == "b":
                 point.Point(coords[2], coords[0], coords[1], self.sprites, self.points)
 
+    def setup_ghosts(self):
+        self.ghost_shadow = ghost.GhostShadow(self.sprites, self.ghosts)
+
     def get_event(self, event):
         self.pacman.get_event(event)
 
@@ -86,7 +91,10 @@ class LevelState(tools.State):
         if lives:
             self.props[const.LIVES] = str(int(self.props[const.LIVES]) - lives)
             self.pacman.kill()
+            for ghost in self.ghosts.sprites():
+                ghost.kill()
             self.setup_pacman()
+            self.setup_ghosts()
         if self.props[const.LIVES] == "0":
             pygame.mouse.set_visible(True)
             self.next = const.GAME_OVER
@@ -107,15 +115,20 @@ class LevelState(tools.State):
                 elif point_t.point_type == "b":
                     self.props[const.SCORE] = str(int(self.props[const.SCORE]) + const.BIG_POINT)
                     self.props[const.TOTAL_SCORE] = str(int(self.props[const.TOTAL_SCORE]) + const.BIG_POINT)
-
-                    self.update_lives(1)
                 point_t.kill()
+
+    def update_ghosts(self):
+        for ghost in self.ghosts.sprites():
+            ghost.update(self.pacman.rect)
+            if pygame.sprite.collide_rect(self.pacman, ghost) or self.pacman.cell == ghost.cell:
+                self.update_lives(1)
 
     def update_sprites(self):
         self.update_score()
         self.update_lives()
         self.pacman.update()
         self.update_points()
+        self.update_ghosts()
 
     def update(self, display):
         display.fill(const.BG_COLOR)
