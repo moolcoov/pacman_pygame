@@ -19,22 +19,22 @@ class Pacman(pygame.sprite.Sprite):
 
         self.w, self.h = self.image.get_size()
         self.x, self.y = grid.cells[self.cell][0] - self.w // 2, grid.cells[self.cell][1] - self.h // 2
-        self.rect = pygame.rect.Rect(0, 0, 0, 0)
+        self.rect = pygame.rect.Rect(self.x, self.y, self.w, self.h)
 
         self.pressed = []
         self.speed = 2
         self.step = 1
 
     def update_cell(self):
-        if self.cell == grid.default_cell:
-            self.step = 0.5
-        else:
-            self.step = 1
-
         for cell, coords in grid.cells.items():
             if all([(self.x + self.w // 2) == coords[0],
                     (self.y + self.h // 2) == coords[1]]):
                 self.cell = cell
+
+        if self.cell == grid.default_cell:
+            self.step = 0.5
+        else:
+            self.step = 1
 
         if self.cell == (13, -2):
             self.x, self.y = grid.cells[(13, 26)][0] - self.w // 2, grid.cells[(13, 26)][1] - self.h // 2
