@@ -6,9 +6,10 @@ from data.components import pacman, grid, point, live_bar, ghost
 
 
 class LevelState(tools.State):
-    def __init__(self):
+    def __init__(self, start_time, props):
         super().__init__()
-        self.props = None
+        self.props = props
+        self.start_time = start_time
         self.points = pygame.sprite.AbstractGroup()
         self.ghosts = pygame.sprite.AbstractGroup()
         self.sprites = pygame.sprite.AbstractGroup()
@@ -54,7 +55,7 @@ class LevelState(tools.State):
 
     def setup_points(self):
         for coords in grid.cells.values():
-            if coords[2] == "s" or coords[2] == "b":
+            if any([coords[2] == "s", coords[2] == "b"]):
                 point.Point(coords[2], coords[0], coords[1], self.sprites, self.points)
 
     def setup_ghosts(self):
@@ -65,11 +66,16 @@ class LevelState(tools.State):
 
     def cleanup(self):
         self.done = False
-        self.props[const.LEVEL] = str(int(self.props[const.LEVEL]) + 1)
-        self.props[const.SCORE] = "0"
-        self.props[const.LIVES] = "3"
+        if self.props[const.LIVES] == "0":
+            self.props[const.LEVEL] = "1"
+            self.props[const.SCORE] = "0"
+            self.props[const.LIVES] = "3"
+        else:
+            self.props[const.LEVEL] = str(int(self.props[const.LEVEL]) + 1)
+            self.props[const.SCORE] = "0"
         self.pacman.kill()
         self.startup()
+        return self.props
 
     def draw_score(self, display):
         display.blit(self.level, (142, 0))
@@ -95,6 +101,7 @@ class LevelState(tools.State):
                 ghost.kill()
             self.setup_pacman()
             self.setup_ghosts()
+            self.start_time = self.current_time
         if self.props[const.LIVES] == "0":
             pygame.mouse.set_visible(True)
             self.next = const.GAME_OVER
@@ -120,7 +127,7 @@ class LevelState(tools.State):
     def update_ghosts(self):
         for ghost in self.ghosts.sprites():
             ghost.update(self.pacman.rect)
-            if pygame.sprite.collide_rect(self.pacman, ghost) or self.pacman.cell == ghost.cell:
+            if any([pygame.sprite.collide_rect(self.pacman, ghost), self.pacman.cell == ghost.cell]):
                 self.update_lives(1)
 
     def update_sprites(self):
@@ -130,7 +137,9 @@ class LevelState(tools.State):
         self.update_points()
         self.update_ghosts()
 
-    def update(self, display):
+    def update(self, display, current_time):
+        self.current_time = current_time
         display.fill(const.BG_COLOR)
-        self.update_sprites()
+        if (self.current_time - self.start_time) / 1000 > 2:
+            self.update_sprites()
         self.draw(display)

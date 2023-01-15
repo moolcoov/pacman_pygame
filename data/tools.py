@@ -13,6 +13,7 @@ class Control:
         Inits base statement
         :param caption: (str) caption for screen
         """
+        self.current_time = 0.0
         self.display = pygame.display.get_surface()
         self.caption = caption
         self.keys = pygame.key.get_pressed()
@@ -29,21 +30,22 @@ class Control:
         :param default_state: (state): Base state
         """
         self.states = states
-        self.state = states[default_state]
+        self.state = states[default_state](self.current_time, None)
 
     def flip_state(self):
-        self.state.cleanup()
-        self.state = self.states[self.state.next]
+        props = self.state.cleanup()
+        self.state = self.states[self.state.next](self.current_time, props)
 
     def update(self):
         """
         Updates the current state
         """
+        self.current_time = pygame.time.get_ticks()
         if self.state.quit:
             self.running = False
         elif self.state.done:
             self.flip_state()
-        self.state.update(self.display)
+        self.state.update(self.display, self.current_time)
 
     def event_loop(self):
         """
@@ -76,6 +78,8 @@ class State(object):
         self.done = False
         self.next = None
         self.props = {}
+        self.start_time = 0.0
+        self.current_time = 0.0
 
     def get_event(self, event: pygame.event):
         pass

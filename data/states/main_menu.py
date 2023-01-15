@@ -5,8 +5,10 @@ from data import tools
 
 
 class MainMenuState(tools.State):
-    def __init__(self):
+    def __init__(self, start_time, props):
         super().__init__()
+        self.props = props
+        self.start_time = start_time
         self.sprites = pygame.sprite.AbstractGroup()
         self.startup()
 
@@ -53,7 +55,6 @@ class MainMenuState(tools.State):
                 self.button_play.y <= pygame.mouse.get_pos()[1] <= self.button_play.y + self.button_play.h]):
             pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
             if event.type == pygame.MOUSEBUTTONUP:
-                pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_NO)
                 pygame.mouse.set_visible(False)
                 self.next = const.LEVEL
                 self.done = True
@@ -69,6 +70,7 @@ class MainMenuState(tools.State):
             if event.key == pygame.K_ESCAPE:
                 self.quit = True
 
-    def update(self, display):
+    def update(self, display, current_time):
+        self.current_time = current_time
         display.fill(const.BG_COLOR)
         self.sprites.draw(display)
