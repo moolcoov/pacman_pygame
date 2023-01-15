@@ -15,6 +15,7 @@ class LiveBar(pygame.sprite.Sprite):
 
         self.w, self.h = self.image.get_size()
         self.x, self.y = 15, 604
+        self.rect = pygame.rect.Rect(self.x, self.y, self.w, self.h)
 
     def change_image(self, lives):
         if lives == 3:

@@ -21,7 +21,7 @@ class Pacman(pygame.sprite.Sprite):
         self.x, self.y = grid.cells[self.cell][0] - self.w // 2, grid.cells[self.cell][1] - self.h // 2
         self.rect = pygame.rect.Rect(self.x, self.y, self.w, self.h)
 
-        self.pressed = []
+        self.pressed = set()
         self.speed = 2
         self.step = 1
 
@@ -59,11 +59,11 @@ class Pacman(pygame.sprite.Sprite):
         :param event: {pygame.event} Event
         """
         if event.type == pygame.KEYDOWN:
-            self.pressed.append(event.key)
+            self.pressed.add(event.key)
         if event.type == pygame.KEYUP:
             try:
                 self.pressed.remove(event.key)
-            except ValueError:
+            except KeyError:
                 pass
 
     def move(self):

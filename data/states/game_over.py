@@ -5,8 +5,10 @@ from data import tools
 
 
 class GameOverState(tools.State):
-    def __init__(self):
+    def __init__(self, start_time, props):
         super().__init__()
+        self.props = props
+        self.start_time = start_time
         self.sprites = pygame.sprite.AbstractGroup()
         self.startup()
 
@@ -53,6 +55,7 @@ class GameOverState(tools.State):
                 self.button_res.y <= pygame.mouse.get_pos()[1] <= self.button_res.y + self.button_res.h]):
             pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
             if event.type == pygame.MOUSEBUTTONUP:
+                pygame.mouse.set_visible(False)
                 self.next = const.LEVEL
                 self.done = True
         elif all([self.button_quit.x <= pygame.mouse.get_pos()[0] <= self.button_quit.x + self.button_quit.w,
@@ -63,6 +66,7 @@ class GameOverState(tools.State):
         else:
             pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
 
-    def update(self, display):
+    def update(self, display, current_time):
+        self.current_time = current_time
         display.fill(const.BG_COLOR)
         self.sprites.draw(display)
