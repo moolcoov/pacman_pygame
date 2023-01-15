@@ -1,8 +1,9 @@
-import pygame
 import math
 
+import pygame
+
 from data import constants as const
-from data import setup, tools
+from data import tools
 from data.components import grid
 
 
