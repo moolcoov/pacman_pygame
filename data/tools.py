@@ -78,8 +78,6 @@ class State(object):
         self.done = False
         self.next = None
         self.props = {}
-        self.start_time = 0.0
-        self.current_time = 0.0
 
     def get_event(self, event: pygame.event):
         pass
