@@ -1,4 +1,6 @@
-![](./resources/media/banner.png)
+![](/resources/media/banner.png)
+
+![](/resources/media/game.png)
 
 An attempt to create the pacman game with Pygame library.
 
