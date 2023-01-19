@@ -167,8 +167,6 @@ class Ghost(pygame.sprite.Sprite):
                     int(self.y + self.h // 2) == int(coords[1])]):
                 self.cell = cell
 
-        print(self.cell)
-
         self.update_tunnel()
 
         if self.cell == grid.default_ghost_cell:
