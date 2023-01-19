@@ -10,7 +10,7 @@ class Point(pygame.sprite.Sprite):
         self.setup_image()
         self.w, self.h = self.image.get_size()
         self.x, self.y = cell_x - self.w // 2, cell_y - self.h // 2
-        self.rect = pygame.rect.Rect(0, 0, 0, 0)
+        self.rect = pygame.rect.Rect(self.x, self.y, self.w, self.h)
 
     def setup_image(self):
         if self.point_type == "s":

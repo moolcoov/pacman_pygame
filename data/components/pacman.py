@@ -15,11 +15,16 @@ class Pacman(pygame.sprite.Sprite):
         self.right_image = tools.load_image("pacman/pacman_right.png")
 
         self.image = self.default_image
+        self.mask = pygame.mask.from_surface(self.image)
+
         self.cell = (22, 12.5)
 
         self.w, self.h = self.image.get_size()
         self.x, self.y = grid.cells[self.cell][0] - self.w // 2, grid.cells[self.cell][1] - self.h // 2
         self.rect = pygame.rect.Rect(self.x, self.y, self.w, self.h)
+
+        self.points = 0
+        self.big_point_mode = False
 
         self.pressed = set()
         self.speed = 2
@@ -52,6 +57,7 @@ class Pacman(pygame.sprite.Sprite):
             self.image = self.right_image
 
         self.w, self.h = self.image.get_size()
+        self.mask = pygame.mask.from_surface(self.image)
 
     def get_event(self, event):
         """

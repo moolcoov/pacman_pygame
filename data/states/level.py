@@ -59,7 +59,10 @@ class LevelState(tools.State):
                 point.Point(coords[2], coords[0], coords[1], self.sprites, self.points)
 
     def setup_ghosts(self):
-        self.ghost_shadow = ghost.GhostShadow(self.sprites, self.ghosts)
+        self.ghost_shadow = ghost.GhostShadow(self.start_time, self.sprites, self.ghosts)
+        self.ghost_speedy = ghost.GhostSpeedy(self.start_time, self.sprites, self.ghosts)
+        self.ghost_bashful = ghost.GhostBashful(self.start_time, self.sprites, self.ghosts)
+        self.ghost_pockey = ghost.GhostPockey(self.start_time, self.sprites, self.ghosts)
 
     def get_event(self, event):
         self.pacman.get_event(event)
@@ -76,6 +79,14 @@ class LevelState(tools.State):
         self.pacman.kill()
         self.startup()
         return self.props
+
+    def ghost_catch(self, ghost):
+        self.props[const.SCORE] = str(int(self.props[const.SCORE]) + 200)
+        self.props[const.TOTAL_SCORE] = str(int(self.props[const.TOTAL_SCORE]) + 200)
+        ghost.direction = "right"
+        ghost.x, ghost.y = grid.cells[ghost.cell][0] - ghost.w // 2, grid.cells[ghost.cell][1] - ghost.h // 2
+        ghost.speed = 6
+        ghost.mode = "caught"
 
     def draw_score(self, display):
         display.blit(self.level, (142, 0))
@@ -99,8 +110,11 @@ class LevelState(tools.State):
             self.pacman.kill()
             for ghost in self.ghosts.sprites():
                 ghost.kill()
+            self.pacman.kill()
             self.setup_pacman()
             self.setup_ghosts()
+            for ghost in self.ghosts.sprites():
+                ghost.start_time = self.current_time
             self.start_time = self.current_time
         if self.props[const.LIVES] == "0":
             pygame.mouse.set_visible(True)
@@ -119,16 +133,25 @@ class LevelState(tools.State):
                 if point_t.point_type == "s":
                     self.props[const.SCORE] = str(int(self.props[const.SCORE]) + const.SMALL_POINT)
                     self.props[const.TOTAL_SCORE] = str(int(self.props[const.TOTAL_SCORE]) + const.SMALL_POINT)
+                    self.pacman.points += 1
                 elif point_t.point_type == "b":
                     self.props[const.SCORE] = str(int(self.props[const.SCORE]) + const.BIG_POINT)
                     self.props[const.TOTAL_SCORE] = str(int(self.props[const.TOTAL_SCORE]) + const.BIG_POINT)
+                    self.pacman.big_point_mode = True
                 point_t.kill()
 
     def update_ghosts(self):
+        modes = []
         for ghost in self.ghosts.sprites():
-            ghost.update(self.pacman.rect)
-            if any([pygame.sprite.collide_rect(self.pacman, ghost), self.pacman.cell == ghost.cell]):
-                self.update_lives(1)
+            if ghost.update(self.pacman, self.current_time, self.ghost_shadow):
+                modes.append(True)
+            if any([pygame.sprite.collide_mask(self.pacman, ghost), self.pacman.cell == ghost.cell]):
+                if all([ghost.mode != "frightened", ghost.mode != "caught"]):
+                    self.update_lives(1)
+                elif all([ghost.mode == "frightened", not ghost.closed]):
+                    self.ghost_catch(ghost)
+        if True in modes:
+            self.pacman.big_point_mode = False
 
     def update_sprites(self):
         self.update_score()
