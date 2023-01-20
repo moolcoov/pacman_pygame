@@ -10,6 +10,7 @@ from data.components import grid
 class Ghost(pygame.sprite.Sprite):
     def __init__(self, start_time, *groups):
         super().__init__(*groups)
+        self.rect = None
         self.start_time = start_time
         self.current_time = 0.0
         self.type = None
