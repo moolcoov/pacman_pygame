@@ -12,10 +12,7 @@ Arrow keys for direction
 
 ## Dependencies
 
-    certifi==2022.12.7
     pygame==2.1.2
-    sentry-sdk==1.12.1
-    urllib3==1.26.13
 
 To install dependencies:
 
