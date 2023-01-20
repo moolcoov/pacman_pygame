@@ -50,19 +50,19 @@ class Ghost(pygame.sprite.Sprite):
                 if any([pacman.points >= 30, (self.current_time - self.exit_timer) / 1000 >= 4]):
                     self.exit_timer = 0.0
                     self.closed = False
-                    self.mode = major_ghost.mode
+                    self.mode = major_ghost.mode if major_ghost.mode != "caught" else "frightened"
                     self.speed = major_ghost.speed
             if self.type == "bashful":
                 if any([pacman.points >= 60, (self.current_time - self.exit_timer) / 1000 >= 8]):
                     self.exit_timer = 0.0
                     self.closed = False
-                    self.mode = major_ghost.mode
+                    self.mode = major_ghost.mode if major_ghost.mode != "caught" else "frightened"
                     self.speed = major_ghost.speed
             if self.type == "pockey":
-                if any([pacman.points >= 70, (self.current_time - self.exit_timer) / 1000 >= 12]):
+                if any([pacman.points >= 80, (self.current_time - self.exit_timer) / 1000 >= 12]):
                     self.exit_timer = 0.0
                     self.closed = False
-                    self.mode = major_ghost.mode
+                    self.mode = major_ghost.mode if major_ghost.mode != "caught" else "frightened"
                     self.speed = major_ghost.speed
 
     def update_fright(self, pacman, major_ghost):
@@ -78,9 +78,6 @@ class Ghost(pygame.sprite.Sprite):
             self.mode = "chase"
             self.speed = 2
             self.x, self.y = grid.cells[self.cell][0] - self.w // 2, grid.cells[self.cell][1] - self.h // 2
-        if all([self.mode == "frightened", major_ghost.mode != "frightened"]):
-            self.mode = major_ghost.mode
-            self.speed = 2
         return pacman.big_point_mode
 
     def update_tunnel(self):
@@ -103,8 +100,9 @@ class Ghost(pygame.sprite.Sprite):
 
     def update_caught(self):
         if self.mode == "caught":
-            self.x, self.y = grid.cells[self.home_cell][0] - self.w // 2, \
-                             grid.cells[self.home_cell][1] - self.h // 2
+            if self.cell == self.home_cell:
+                self.mode = "chase"
+                self.speed = 2
 
     def update_scatter(self):
         if any([self.mode == "chase", self.mode == "scatter"]):
@@ -127,18 +125,26 @@ class Ghost(pygame.sprite.Sprite):
 
     def get_directions(self):
         directions = {}
-        if (int(self.cell[0] - self.step), self.cell[1]) in grid.cells:
-            if self.x + self.w // 2 == grid.cells[(int(self.cell[0] - self.step), self.cell[1])][0]:
-                directions[const.UP] = (int(self.cell[0] - self.step), self.cell[1])
-        if (int(self.cell[0] + self.step), self.cell[1]) in grid.cells:
-            if self.x + self.w // 2 == grid.cells[(int(self.cell[0] + self.step), self.cell[1])][0]:
-                directions[const.DOWN] = (int(self.cell[0] + self.step), self.cell[1])
-        if (self.cell[0], int(self.cell[1] - self.step)) in grid.cells:
-            if self.y + self.h // 2 == grid.cells[(self.cell[0], int(self.cell[1] - self.step))][1]:
-                directions[const.LEFT] = (self.cell[0], int(self.cell[1] - self.step))
-        if (self.cell[0], int(self.cell[1] + self.step)) in grid.cells:
-            if self.y + self.h // 2 == grid.cells[(self.cell[0], int(self.cell[1] + self.step))][1]:
-                directions[const.RIGHT] = (self.cell[0], int(self.cell[1] + self.step))
+        if all([any([self.cell == (10, 12), self.cell == (10, 13)]), self.mode == "caught"]):
+            if self.cell == (10, 13):
+                if self.y + self.h // 2 == grid.cells[(self.cell[0], self.cell[1] - self.step)][1]:
+                    directions[const.LEFT] = (self.cell[0], self.cell[1] - self.step)
+            if self.cell == (10, 12):
+                if self.y + self.h // 2 == grid.cells[(self.cell[0], int(self.cell[1] + self.step))][1]:
+                    directions[const.RIGHT] = (self.cell[0], self.cell[1] + self.step)
+        else:
+            if (int(self.cell[0] - self.step), self.cell[1]) in grid.cells:
+                if self.x + self.w // 2 == grid.cells[(int(self.cell[0] - self.step), self.cell[1])][0]:
+                    directions[const.UP] = (int(self.cell[0] - self.step), self.cell[1])
+            if (int(self.cell[0] + self.step), self.cell[1]) in grid.cells:
+                if self.x + self.w // 2 == grid.cells[(int(self.cell[0] + self.step), self.cell[1])][0]:
+                    directions[const.DOWN] = (int(self.cell[0] + self.step), self.cell[1])
+            if (self.cell[0], int(self.cell[1] - self.step)) in grid.cells:
+                if self.y + self.h // 2 == grid.cells[(self.cell[0], int(self.cell[1] - self.step))][1]:
+                    directions[const.LEFT] = (self.cell[0], int(self.cell[1] - self.step))
+            if (self.cell[0], int(self.cell[1] + self.step)) in grid.cells:
+                if self.y + self.h // 2 == grid.cells[(self.cell[0], int(self.cell[1] + self.step))][1]:
+                    directions[const.RIGHT] = (self.cell[0], int(self.cell[1] + self.step))
 
         if all([self.direction == const.UP, const.DOWN in directions]):
             directions.pop(const.DOWN)
@@ -159,6 +165,9 @@ class Ghost(pygame.sprite.Sprite):
         if all([self.cell in grid.NOT_UP, const.UP in directions]):
             directions.pop(const.UP)
 
+        if all([self.mode == "caught", self.cell == (10, 12.5)]):
+            return {const.DOWN: (13, 12.5)}
+
         return directions
 
     def update_cell(self, pacman):
@@ -169,7 +178,8 @@ class Ghost(pygame.sprite.Sprite):
 
         self.update_tunnel()
 
-        if self.cell == grid.default_ghost_cell:
+        if any([self.cell == grid.default_ghost_cell,
+                all([self.mode == "caught", any([self.cell == (10, 12), self.cell == (10, 13)])])]):
             self.step = 0.5
         else:
             self.step = 1
@@ -237,6 +247,9 @@ class Ghost(pygame.sprite.Sprite):
             self.y -= self.step * self.speed
         if (self.y + self.h // 2) < grid.cells[self.v_cell][1]:
             self.y += self.step * self.speed
+
+        if self.type == "speedy":
+            print(self.cell, self.step, int(self.cell[1] + self.step))
 
         self.x, self.y = int(self.x), int(self.y)
 
