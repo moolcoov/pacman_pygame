@@ -248,9 +248,6 @@ class Ghost(pygame.sprite.Sprite):
         if (self.y + self.h // 2) < grid.cells[self.v_cell][1]:
             self.y += self.step * self.speed
 
-        if self.type == "speedy":
-            print(self.cell, self.step, int(self.cell[1] + self.step))
-
         self.x, self.y = int(self.x), int(self.y)
 
     def update(self, pacman, current_time, major_ghost):
