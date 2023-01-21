@@ -52,19 +52,19 @@ class Ghost(pygame.sprite.Sprite):
                     self.exit_timer = 0.0
                     self.closed = False
                     self.mode = major_ghost.mode if major_ghost.mode != "caught" else "frightened"
-                    self.speed = major_ghost.speed
+                    self.speed = major_ghost.speed if major_ghost.mode != "caught" else 1
             if self.type == "bashful":
                 if any([pacman.points >= 60, (self.current_time - self.exit_timer) / 1000 >= 8]):
                     self.exit_timer = 0.0
                     self.closed = False
                     self.mode = major_ghost.mode if major_ghost.mode != "caught" else "frightened"
-                    self.speed = major_ghost.speed
+                    self.speed = major_ghost.speed if major_ghost.mode != "caught" else 1
             if self.type == "pockey":
                 if any([pacman.points >= 80, (self.current_time - self.exit_timer) / 1000 >= 12]):
                     self.exit_timer = 0.0
                     self.closed = False
                     self.mode = major_ghost.mode if major_ghost.mode != "caught" else "frightened"
-                    self.speed = major_ghost.speed
+                    self.speed = major_ghost.speed if major_ghost.mode != "caught" else 1
 
     def update_fright(self, pacman, major_ghost):
         if any([pacman.big_point_mode]):
@@ -76,9 +76,10 @@ class Ghost(pygame.sprite.Sprite):
         if any([all([(self.current_time - self.frighten_timer) / 1000 >= 8, self.frighten_timer != 0.0]),
                 all([(major_ghost.frighten_timer - self.current_time) / 1000 >= 8, self.frighten_timer != 0.0])]):
             self.frighten_timer = 0.0
-            self.mode = "chase"
-            self.speed = 2
-            self.x, self.y = grid.cells[self.cell][0] - self.w // 2, grid.cells[self.cell][1] - self.h // 2
+            if self.mode != "caught":
+                self.mode = "chase"
+                self.speed = 2
+                self.x, self.y = grid.cells[self.cell][0] - self.w // 2, grid.cells[self.cell][1] - self.h // 2
         return pacman.big_point_mode
 
     def update_tunnel(self):
