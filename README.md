@@ -10,11 +10,15 @@ Arrow keys for direction
 
 ## Dependencies
 
-    pygame==2.1.2
+```python
+pygame==2.1.2
+```
 
 To install dependencies:
 
-    pip install -r requirements.txt
+```sh
+pip install -r requirements.txt
+```
 
 ## Disclaimer
 
